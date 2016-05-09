@@ -1,20 +1,21 @@
 /*
- * Feeder for fish
- * 
- * Used:
- * - RTC Timer
- * - Servo SG90
- * - arduino Pro mini 326p, 5v
- * 
- * To add feed times edit _feedTimeList array,
- * _feedTimeList[0] uses for manual feeding, so not change it
+   Feeder for fish
+
+   Used:
+   - RTC Timer
+   - Servo SG90
+   - arduino Pro mini 326p, 5v
+
+   To add feed times edit _feedTimeList array,
+   _feedTimeList[0] uses for manual feeding, so not change it
 */
 
 #include <Wire.h>
 #include <RTClib.h>
 #include <Servo.h>
 
-#define servoPin 9
+const int servoPin = 9;
+const int buttonPin = 2;
 
 Servo _servo;
 RTC_DS1307 _clock;
@@ -28,8 +29,8 @@ typedef struct TimeStruct {
 
 TimeStruct _feedTimeList[] = {
   {24, 0, 5, 0}, //on serial read, manual feed,!! DONT REMOVE !!
-  {12, 2, 5, 0}, //alarm
-  {12, 3, 5, 0}  //alarm ...
+  {8, 0, 5, 0}, //alarm
+  {20, 0, 5, 0}  //alarm ...
 };
 
 //helper vars
@@ -41,17 +42,20 @@ byte activeIndex = 100;
 unsigned long previousMillisFeed = 0;
 const long servoSpeed = 7; //speed of servo
 int isBusy = 0;
+int buttonState = 0;
 
 void setup() {
   Serial.begin(9600);
+  pinMode(buttonPin, INPUT);
   if (! _clock.begin()) {
     Serial.println("Couldn't find RTC");
     while (1);
   }
-
+delay(1000);
   if (! _clock.isrunning()) {
     Serial.println("RTC is NOT running!");
     _clock.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    
   }
 
   //  _servo.attach(servoPin, servoMinImp, servoMaxImp);
@@ -108,6 +112,14 @@ void loop() {
         break;
       }
     }
+
+    buttonState = digitalRead(buttonPin);
+
+    if (buttonState == HIGH) {
+      activeIndex = 0;
+      TimeStruct* ts = &_feedTimeList[activeIndex];
+      ts->feedProgress = ts->feedSize;
+    }
   }
 
   if (activeIndex != 100) {
@@ -117,6 +129,7 @@ void loop() {
 }
 
 void showTime() {
+  //  return;
   DateTime now = _clock.now();
   Serial.print(now.hour(), DEC);
   Serial.print(':');
@@ -127,33 +140,33 @@ void showTime() {
 }
 
 void feedNow(byte index) {
-  if(isBusy == 1) return;
-//  unsigned long currentMillis = millis();
-//  if (currentMillis - previousMillisRotate >= intervalRotate) {
-    Serial.println("FEED NOW");
-//    previousMillisRotate = currentMillis;
-    TimeStruct* ts = &_feedTimeList[index];
-    if (ts->feedProgress > 0) {
+  if (isBusy == 1) return;
+  //  unsigned long currentMillis = millis();
+  //  if (currentMillis - previousMillisRotate >= intervalRotate) {
+  Serial.println("FEED NOW");
+  //    previousMillisRotate = currentMillis;
+  TimeStruct* ts = &_feedTimeList[index];
+  if (ts->feedProgress > 0) {
 
-      if (ts->feedProgress % 2 == 0) {
-        //        _servo.writeMicroseconds(servoMinImp);
-        //        _servo.write(0);
-        servoClose();
-      } else
-      {
-        //        _servo.writeMicroseconds(servoMaxImp);
-        //        _servo.write(180);
-        servoOpen();
-      }
-      ts->feedProgress --;
-    }
-
-    else {
-      activeIndex = 100;
-      //    _servo.writeMicroseconds(servoMinImp);
+    if (ts->feedProgress % 2 == 0) {
+      //        _servo.writeMicroseconds(servoMinImp);
+      //        _servo.write(0);
       servoClose();
+    } else
+    {
+      //        _servo.writeMicroseconds(servoMaxImp);
+      //        _servo.write(180);
+      servoOpen();
     }
-//  }
+    ts->feedProgress --;
+  }
+
+  else {
+    activeIndex = 100;
+    //    _servo.writeMicroseconds(servoMinImp);
+    servoClose();
+  }
+  //  }
 }
 
 void checkFeed() {
@@ -169,14 +182,14 @@ void checkFeed() {
   }
 
   //debug
-  if (activeIndex == 100)
-  {
-    if (now.second() == 0) {
-      activeIndex = 0;
-      TimeStruct* ts = &_feedTimeList[activeIndex];
-      ts->feedProgress = ts->feedSize;
-    }
-  }
+  //  if (activeIndex == 100)
+  //  {
+  //    if (now.second() == 0) {
+  //      activeIndex = 0;
+  //      TimeStruct* ts = &_feedTimeList[activeIndex];
+  //      ts->feedProgress = ts->feedSize;
+  //    }
+  //  }
 }
 
 
