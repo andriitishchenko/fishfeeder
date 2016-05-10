@@ -126,12 +126,16 @@ void loop() {
   while(Serial.available()) {
     String inputStr = Serial.readString();
     char charBuf[50];
-    inputStr.toCharArray(charBuf, 10) ;
+    inputStr.toCharArray(charBuf, 20) ;//2016/05/09 23:30:00
     if(getTime(charBuf))
     {
       _clock.adjust(_datetime);
     }
-    
+
+  //
+  float batteryVoltageRead = analogRead (A0);
+  float batteryVoltage =float( batteryVoltageRead * (5/1023.));
+  Serial.println (batteryVoltage);
   }
 
   unsigned long currentMillis = millis();
