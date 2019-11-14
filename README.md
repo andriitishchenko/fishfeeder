@@ -20,5 +20,11 @@ Details
 https://create.arduino.cc/projecthub/andrux/aquarium-fish-feeder-59dc74
 
 
-![alt text](https://hacksterio.s3.amazonaws.com/uploads/attachments/1018232/screenshot_2019-11-14_at_22_19_24_mGzzLZG8mT.png)
+![alt text](https://github.com/andriitishchenko/fishfeeder/blob/master/wiki/1.jpg)
+
+![alt text](https://github.com/andriitishchenko/fishfeeder/blob/master/wiki/2.jpg)
+
+![alt text](https://github.com/andriitishchenko/fishfeeder/blob/master/wiki/3.jpg)
+
+![alt text](https://github.com/andriitishchenko/fishfeeder/blob/master/wiki/4.png)
 
