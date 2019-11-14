@@ -15,5 +15,10 @@ Quantity | Component
 1 | Pushbutton
 1 | 10 kΩ Resistor
 
+
+Details
+https://create.arduino.cc/projecthub/andrux/aquarium-fish-feeder-59dc74
+
+
 ![alt text](https://hacksterio.s3.amazonaws.com/uploads/attachments/1018232/screenshot_2019-11-14_at_22_19_24_mGzzLZG8mT.png)
 
